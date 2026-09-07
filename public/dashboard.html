@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — ParkNest</title>
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='1' y='1' width='22' height='22' rx='6' fill='%235b3df5'/%3E%3Ctext x='12' y='17' font-size='14' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+  <div class="grid-overlay"></div><div id="particles"></div>
+</div>
+
+<header id="navbar">
+  <nav class="nav">
+    <a class="logo" href="index.html"><span class="pin"><svg class="ic-svg"><use href="#i-parking"/></svg></span>Park<em>Nest</em></a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="browse.html">Browse slots</a>
+      <a href="list.html">List your spot</a>
+      <a href="dashboard.html" class="active">Dashboard</a>
+      <a href="index.html#faq">FAQ</a>
+    </div>
+    <div class="nav-cta" id="navAuth"></div>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <div class="wrap">
+      <span class="sec-tag">Dashboard</span>
+      <h1 id="hello" style="font-size:clamp(2.2rem,4.5vw,3.4rem)">Your <span class="grad">parking business.</span></h1>
+      <p class="sec-sub" style="margin-bottom:10px">Track listings, bookings and earnings — everything in one place.</p>
+    </div>
+  </div>
+
+  <section style="padding-top:20px">
+    <div class="wrap">
+      <!-- stats -->
+      <div class="dstat-grid">
+        <div class="dstat"><div class="k"><svg class="ic-svg"><use href="#i-parking"/></svg> Active listings</div><div class="v" id="stListings">—</div></div>
+        <div class="dstat"><div class="k"><svg class="ic-svg"><use href="#i-money"/></svg> Total earned</div><div class="v green" id="stEarned">—</div></div>
+        <div class="dstat"><div class="k"><svg class="ic-svg"><use href="#i-inbox"/></svg> Bookings received</div><div class="v" id="stReceived">—</div></div>
+        <div class="dstat"><div class="k"><svg class="ic-svg"><use href="#i-car"/></svg> Spent on parking</div><div class="v" id="stSpent">—</div></div>
+      </div>
+
+      <!-- my listings -->
+      <div class="section-block">
+        <h3>My listings <a href="list.html" class="btn btn-primary btn-sm" style="font-style:normal">+ New listing</a></h3>
+        <div id="listingsBox"><div class="loading">Loading…</div></div>
+      </div>
+
+      <!-- bookings on my slots -->
+      <div class="section-block">
+        <h3>Bookings on my slots</h3>
+        <div id="receivedBox"><div class="loading">Loading…</div></div>
+      </div>
+
+      <!-- my bookings -->
+      <div class="section-block">
+        <h3>My parking bookings <a href="browse.html" class="btn btn-ghost btn-sm" style="font-style:normal">Book a slot</a></h3>
+        <div id="bookingsBox"><div class="loading">Loading…</div></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="foot-bottom" style="border:none;padding-top:0">
+    <span>© <span id="year"></span> ParkNest Technologies Pvt. Ltd.</span>
+    <span><a href="index.html" style="color:var(--violet)">Back to home</a></span>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+if (!requireAuth()) throw new Error('redirecting');
+
+const $ = id => document.getElementById(id);
+
+(async () => {
+  const user = await refreshUser();
+  if (!user) return;
+  $('hello').innerHTML = esc(user.name.split(' ')[0]) + "'s <span class='grad'>parking business.</span>";
+  try {
+    const [sum, mine, received, booked] = await Promise.all([
+      api('/summary'),
+      api('/slots/mine'),
+      api('/bookings/received'),
+      api('/bookings/mine')
+    ]);
+    /* stat cards */
+    $('stListings').textContent = sum.listings_active + ' / ' + sum.listings;
+    $('stEarned').textContent = money(sum.earned);
+    $('stReceived').textContent = sum.received_bookings;
+    $('stSpent').textContent = money(sum.spent) + ' (' + sum.trips + ' trips)';
+
+    renderListings(mine.slots);
+    renderReceived(received.bookings);
+    renderBookings(booked.bookings);
+  } catch (e) {
+    if (e.status === 401) return;
+    toast(e.message);
+  }
+})();
+
+/* ---------- my listings ---------- */
+function renderListings(slots) {
+  const box = $('listingsBox');
+  if (!slots.length) {
+    box.innerHTML = `<div class="empty">
+      <svg class="ic-svg"><use href="#i-parking"/></svg>
+      <h3>No listings yet</h3><p>List your idle slot and start earning — it takes 2 minutes.<br><br>
+      <a href="list.html" class="btn btn-primary btn-sm">List your spot</a></p></div>`;
+    return;
+  }
+  box.innerHTML = `<div class="tbl-wrap"><table>
+    <thead><tr><th>Slot</th><th>Location</th><th>Pricing</th><th>Bookings</th><th>Earned</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>${slots.map(s => `
+      <tr>
+        <td><b>${esc(s.slot_no)}</b><span class="sub">${esc(s.vehicle_type)}${s.ev ? ' · EV' : ''}</span></td>
+        <td>${esc(s.society)}<span class="sub">${esc(s.city)}</span></td>
+        <td><b>${money(s.price_hour)}</b>/hr<span class="sub">${money(s.price_month)}/mo</span></td>
+        <td>${s.bookings_count}</td>
+        <td><b style="color:var(--green)">${money(s.earned)}</b></td>
+        <td><span class="st ${s.active ? 'st-active' : 'st-paused'}">${s.active ? 'Active' : 'Paused'}</span></td>
+        <td><div class="row-actions">
+          <button class="link-btn" data-toggle="${s.id}" data-to="${s.active ? 0 : 1}">${s.active ? 'Pause' : 'Resume'}</button>
+          <button class="link-btn danger" data-del="${s.id}">Delete</button>
+        </div></td>
+      </tr>`).join('')}
+    </tbody></table></div>`;
+
+  box.querySelectorAll('[data-toggle]').forEach(b => b.addEventListener('click', async () => {
+    try {
+      await api('/slots/' + b.dataset.toggle, { method: 'PATCH', body: { active: b.dataset.to === '1' } });
+      toast(b.dataset.to === '1' ? 'Listing resumed' : 'Listing paused');
+      loadListings();
+    } catch (e) { toast(e.message); }
+  }));
+  box.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', async () => {
+    if (!confirm('Delete this listing permanently?')) return;
+    try {
+      await api('/slots/' + b.dataset.del, { method: 'DELETE' });
+      toast('Listing deleted');
+      loadListings();
+    } catch (e) { toast(e.message); }
+  }));
+}
+async function loadListings() {
+  const { slots } = await api('/slots/mine');
+  renderListings(slots);
+  const sum = await api('/summary');
+  $('stListings').textContent = sum.listings_active + ' / ' + sum.listings;
+}
+
+/* ---------- bookings received (owner side) ---------- */
+function renderReceived(rows) {
+  const box = $('receivedBox');
+  if (!rows.length) {
+    box.innerHTML = `<div class="empty">
+      <svg class="ic-svg"><use href="#i-inbox"/></svg>
+      <h3>No bookings on your slots yet</h3><p>Once parkers book your slots, requests and earnings appear here.</p></div>`;
+    return;
+  }
+  box.innerHTML = `<div class="tbl-wrap"><table>
+    <thead><tr><th>Parker</th><th>Slot</th><th>When</th><th>Duration</th><th>Your earning</th><th>Status</th><th>Gate pass</th></tr></thead>
+    <tbody>${rows.map(b => {
+      const [cls, label] = bookingState(b);
+      return `<tr>
+        <td><b>${esc(b.parker_name)}</b><span class="sub">${esc(b.vehicle_no)}</span></td>
+        <td>${esc(b.society)}<span class="sub">${esc(b.slot_no)}</span></td>
+        <td>${fmtDay(b.date)}<span class="sub">${time12(b.start_time)}</span></td>
+        <td>${hoursLabel(b.hours)}</td>
+        <td><b style="color:var(--green)">${money(b.owner_earning)}</b></td>
+        <td><span class="st ${cls}">${label}</span></td>
+        <td>${b.status !== 'cancelled' && b.pass_code ? `<a class="link-btn" target="_blank" href="verify.html?code=${esc(b.pass_code)}" title="Verify this pass">${esc(b.pass_code)}</a>` : '—'}</td>
+      </tr>`;
+    }).join('')}
+    </tbody></table></div>`;
+}
+
+/* ---------- my bookings (parker side) ---------- */
+function renderBookings(rows) {
+  const box = $('bookingsBox');
+  if (!rows.length) {
+    box.innerHTML = `<div class="empty">
+      <svg class="ic-svg"><use href="#i-car"/></svg>
+      <h3>No bookings yet</h3><p>Find a verified slot near your workplace and park stress-free.<br><br>
+      <a href="browse.html" class="btn btn-primary btn-sm">Browse slots</a></p></div>`;
+    return;
+  }
+  box.innerHTML = `<div class="tbl-wrap"><table>
+    <thead><tr><th>Slot</th><th>Where</th><th>When</th><th>Duration</th><th>Vehicle</th><th>Paid</th><th>Status</th><th></th></tr></thead>
+    <tbody>${rows.map(b => {
+      const [cls, label] = bookingState(b);
+      const cancellable = b.status !== 'cancelled' && new Date(b.date + 'T' + b.start_time).getTime() > Date.now();
+      return `<tr>
+        <td><b>${esc(b.slot_no)}</b>${b.ev ? ' <span class="badge-pill badge-ev">EV</span>' : ''}</td>
+        <td>${esc(b.society)}<span class="sub">${esc(b.city)}</span></td>
+        <td>${fmtDay(b.date)}<span class="sub">${time12(b.start_time)}</span></td>
+        <td>${hoursLabel(b.hours)}</td>
+        <td>${esc(b.vehicle_no)}</td>
+        <td><b>${money(b.total)}</b></td>
+        <td><span class="st ${cls}">${label}</span></td>
+        <td>
+          <div class="row-actions">
+            ${b.status !== 'cancelled' ? `<a class="link-btn" target="_blank" href="pass.html?booking=${b.id}">Gate pass</a>` : ''}
+            ${cancellable ? `<button class="link-btn danger" data-cancel="${b.id}">Cancel</button>` : ''}
+          </div>
+        </td>
+      </tr>`;
+    }).join('')}
+    </tbody></table></div>`;
+
+  box.querySelectorAll('[data-cancel]').forEach(b => b.addEventListener('click', async () => {
+    if (!confirm('Cancel this booking?')) return;
+    try {
+      await api('/bookings/' + b.dataset.cancel + '/cancel', { method: 'POST' });
+      toast('Booking cancelled');
+      const { bookings } = await api('/bookings/mine');
+      renderBookings(bookings);
+    } catch (e) { toast(e.message); }
+  }));
+}
+</script>
+</body>
+</html>

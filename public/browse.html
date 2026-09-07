@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse &amp; Book Parking Slots — ParkNest</title>
+<meta name="description" content="Find and book verified parking slots inside apartment societies — hourly, nightly or monthly.">
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='1' y='1' width='22' height='22' rx='6' fill='%235b3df5'/%3E%3Ctext x='12' y='17' font-size='14' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+  <div class="grid-overlay"></div><div id="particles"></div>
+</div>
+
+<header id="navbar">
+  <nav class="nav">
+    <a class="logo" href="index.html"><span class="pin"><svg class="ic-svg"><use href="#i-parking"/></svg></span>Park<em>Nest</em></a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="browse.html" class="active">Browse slots</a>
+      <a href="list.html">List your spot</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="index.html#faq">FAQ</a>
+    </div>
+    <div class="nav-cta" id="navAuth"></div>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <div class="wrap">
+      <span class="sec-tag">Browse &amp; book</span>
+      <h1 style="font-size:clamp(2.2rem,4.5vw,3.4rem)">Find your <span class="grad">perfect spot.</span></h1>
+      <p class="sec-sub" style="margin-bottom:10px">Verified slots inside gated societies. Filter by area, EV charging and vehicle type — book hourly or monthly.</p>
+    </div>
+  </div>
+
+  <section style="padding-top:26px">
+    <div class="wrap">
+      <!-- filters -->
+      <div class="panel reveal" style="margin-bottom:30px">
+        <div class="filters">
+          <div class="field">
+            <label for="fQ">Society / Area / Slot</label>
+            <input type="text" id="fQ" placeholder="e.g. Sunrise, Baner, B1-12">
+          </div>
+          <div class="field">
+            <label for="fCity">City</label>
+            <select id="fCity">
+              <option value="">All cities</option>
+              <option>Pune</option><option>Mumbai</option><option>Bengaluru</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="fVehicle">Vehicle</label>
+            <select id="fVehicle">
+              <option value="">Any</option><option>Car</option><option>Two-wheeler</option>
+            </select>
+          </div>
+          <div class="field" style="display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+            <label class="check-row" style="margin:0"><input type="checkbox" id="fEv"> <svg class="ic-svg" style="width:16px;height:16px;color:var(--green)"><use href="#i-zap"/></svg> EV only</label>
+            <select id="fSort" style="padding:10px 12px;border-radius:10px;border:1px solid #dfe3f0;background:#fbfcff;color:var(--ink);font-size:.9rem">
+              <option value="">Newest</option>
+              <option value="price_asc">Price: low to high</option>
+              <option value="price_desc">Price: high to low</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-meta" id="resultMeta" style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap">
+        <span id="metaText"></span>
+        <div class="tabs" style="margin-bottom:0">
+          <button class="tab-btn active" id="vList"><svg class="ic-svg"><use href="#i-file"/></svg> List</button>
+          <button class="tab-btn" id="vMap"><svg class="ic-svg"><use href="#i-pin"/></svg> Map</button>
+        </div>
+      </div>
+      <div class="slots-grid" id="grid">
+        <div class="loading">Loading slots…</div>
+      </div>
+      <div id="mapView" class="map-wrap hidden" style="display:none">
+        <div id="map"></div>
+        <div class="map-fallback hidden" id="mapFallback">
+          <div>
+            <svg class="ic-svg" style="width:42px;height:42px;margin:0 auto 14px;color:#c3c8de"><use href="#i-pin"/></svg>
+            <h3 style="font-family:var(--font-b);color:var(--ink);margin-bottom:6px">Map needs internet access</h3>
+            <p>Map tiles load from OpenStreetMap. The list view works offline — switch back any time.</p>
+          </div>
+        </div>
+      </div>
+      <p class="map-note hidden" id="mapNote">Markers are pinned near each society. Exact directions come with your gate pass.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="foot-bottom" style="border:none;padding-top:0">
+    <span>© <span id="year"></span> ParkNest Technologies Pvt. Ltd.</span>
+    <span><a href="index.html" style="color:var(--violet)">Back to home</a></span>
+  </div>
+</footer>
+
+<!-- BOOKING MODAL -->
+<div class="modal" id="bookModal">
+  <div class="modal-card">
+    <h3>Book <span id="bmSlot" style="font-style:italic;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">slot</span></h3>
+    <p id="bmWhere">—</p>
+    <div class="field" style="margin-top:14px">
+      <label for="bmDate">Date</label>
+      <input type="date" id="bmDate">
+    </div>
+    <div class="field">
+      <label for="bmTime">Start time</label>
+      <select id="bmTime"></select>
+    </div>
+    <div class="field">
+      <label>Availability — <span id="bmAvailDate" style="text-transform:none;letter-spacing:0"></span></label>
+      <div class="avail-strip" id="bmAvail"></div>
+      <div class="avail-hours"><span>00h</span><span>06h</span><span>12h</span><span>18h</span><span>23h</span></div>
+      <div class="avail-legend">
+        <span><i style="background:rgba(10,166,214,.3);border:1px solid rgba(10,166,214,.5)"></i>Free</span>
+        <span><i style="background:rgba(225,29,107,.18);border:1px solid rgba(225,29,107,.45)"></i>Booked</span>
+        <span><i style="background:rgba(217,119,6,.16);border:1px solid rgba(217,119,6,.45)"></i>Conflicts with duration</span>
+        <span><i style="background:#eef0f7;border:1px solid #e3e6f2"></i>Outside hours / past</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>Duration</label>
+      <div class="durations" id="bmDur">
+        <button class="dur" data-h="1">1 hr</button>
+        <button class="dur active" data-h="2">2 hrs</button>
+        <button class="dur" data-h="4">4 hrs</button>
+        <button class="dur" data-h="8">8 hrs</button>
+        <button class="dur" data-h="12">Night 12h</button>
+        <button class="dur" data-h="24">1 day</button>
+        <button class="dur" data-h="720">Monthly</button>
+      </div>
+    </div>
+    <div class="field">
+      <label for="bmVeh">Vehicle number</label>
+      <input type="text" id="bmVeh" placeholder="e.g. MH 12 AB 3456" maxlength="14">
+    </div>
+    <div class="summary-box">
+      <div class="s-row"><span>Duration</span><b id="bmDurLabel">2 hrs</b></div>
+      <div class="s-row" id="bmEvRow" style="display:none"><span>EV charging</span><b style="color:var(--green)">included + ₹30</b></div>
+      <div class="s-total"><span style="color:var(--muted);font-weight:600">Total</span><span class="amt" id="bmAmt">₹0</span></div>
+    </div>
+    <p class="form-error" id="bmError"></p>
+    <div class="modal-actions" style="margin-top:16px">
+      <button class="btn btn-ghost" id="bmCancel">Cancel</button>
+      <button class="btn btn-primary" id="bmConfirm">Confirm booking</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal" id="okModal">
+  <div class="modal-card" style="text-align:center">
+    <svg class="tick-circle" viewBox="0 0 100 100"><circle cx="50" cy="50" r="44"/><path d="M32 52 l13 13 l24 -28"/></svg>
+    <h3>Slot booked!</h3>
+    <p>Show this pass at the society gate. Details:</p>
+    <div class="m-detail" id="okDetail"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="okClose">Close</button>
+      <a href="dashboard.html" class="btn btn-ghost">My bookings</a>
+      <a href="#" class="btn btn-primary" id="okPass" target="_blank">View gate pass</a>
+    </div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+/* ---------- state ---------- */
+let SLOTS = [];
+let current = null;          /* slot being booked */
+let hours = 2;
+
+const $ = id => document.getElementById(id);
+const grid = $('grid');
+
+/* preselect from ?slot=ID or ?q= */
+const params = new URLSearchParams(location.search);
+if (params.get('q')) $('fQ').value = params.get('q');
+
+/* ---------- time select (30-min steps, 24h values, 12h labels) ---------- */
+(function fillTimes(){
+  const sel = $('bmTime');
+  for (let h = 0; h < 24; h++) for (const m of [0, 30]) {
+    const v = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+    const o = document.createElement('option');
+    o.value = v; o.textContent = time12(v);
+    sel.appendChild(o);
+  }
+  sel.value = '10:00';
+})();
+
+const today = new Date(); today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+$('bmDate').value = today.toISOString().slice(0, 10);
+$('bmDate').min = $('bmDate').value;
+$('bmDate').addEventListener('change', () => { if (current) loadAvail(); });
+$('bmTime').addEventListener('change', renderAvail);
+
+/* ---------- load slots ---------- */
+async function load() {
+  grid.innerHTML = '<div class="loading">Loading slots…</div>';
+  const qs = new URLSearchParams();
+  if ($('fQ').value.trim()) qs.set('q', $('fQ').value.trim());
+  if ($('fCity').value) qs.set('city', $('fCity').value);
+  if ($('fVehicle').value) qs.set('vehicle', $('fVehicle').value);
+  if ($('fEv').checked) qs.set('ev', '1');
+  if ($('fSort').value) qs.set('sort', $('fSort').value);
+  try {
+    const { slots } = await api('/slots?' + qs.toString());
+    SLOTS = slots;
+    render();
+  } catch (e) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
+      <svg class="ic-svg"><use href="#i-inbox"/></svg>
+      <h3>Could not reach the API</h3>
+      <p>${esc(e.message)}<br>If this page is hosted on GitHub Pages, set your Render API URL in <b>js/config.js</b>.</p>
+    </div>`;
+    $('metaText').textContent = '';
+  }
+}
+
+function render() {
+  $('metaText').textContent = SLOTS.length + ' slot' + (SLOTS.length === 1 ? '' : 's') + ' found';
+  if (!SLOTS.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
+      <svg class="ic-svg"><use href="#i-search"/></svg>
+      <h3>No slots match your filters</h3><p>Try a different area, or clear the EV / vehicle filters.</p></div>`;
+    return;
+  }
+  grid.innerHTML = SLOTS.map(s => `
+    <div class="slot-card">
+      <div class="sc-top">
+        <div>
+          <div class="sc-society">${esc(s.society)}</div>
+          <div class="sc-city"><svg class="ic-svg"><use href="#i-pin"/></svg>${esc(s.city)} · ${esc(s.slot_no)}</div>
+        </div>
+        <div class="sc-badges">
+          ${s.ev ? '<span class="badge-pill badge-ev">EV</span>' : ''}
+          ${s.covered ? '<span class="badge-pill badge-cov">Covered</span>' : ''}
+          <span class="badge-pill badge-veh">${esc(s.vehicle_type)}</span>
+        </div>
+      </div>
+      <div class="sc-note">${esc(s.note || 'Verified society slot with digital gate pass access.')}</div>
+      <div class="sc-price">
+        <span class="p">${money(s.price_hour)}</span><span class="u">/hr</span>
+        <span class="pm">or <b>${money(s.price_month)}</b>/mo</span>
+      </div>
+      <div class="sc-foot">
+        <span class="sc-owner">Free ${time12(s.avail_from)}–${time12(s.avail_to)} · by <b>${esc(s.owner_name)}</b></span>
+        <button class="btn btn-primary btn-sm" data-book="${s.id}">Book</button>
+      </div>
+    </div>`).join('');
+
+  grid.querySelectorAll('[data-book]').forEach(b =>
+    b.addEventListener('click', () => openBook(+b.dataset.book)));
+
+  if (currentView === 'map' && map) renderMarkers();
+}
+
+/* debounce text input */
+let deb; $('fQ').addEventListener('input', () => { clearTimeout(deb); deb = setTimeout(load, 350); });
+['fCity','fVehicle','fSort'].forEach(id => $(id).addEventListener('change', load));
+$('fEv').addEventListener('change', load);
+
+/* ---------- booking flow ---------- */
+function quote(h) {
+  if (!current) return 0;
+  return h >= 720 ? current.price_month + (current.ev ? 300 : 0)
+                  : current.price_hour * h + (current.ev ? 30 : 0);
+}
+function updateBookUI() {
+  $('bmDurLabel').textContent = hoursLabel(hours);
+  $('bmEvRow').style.display = current && current.ev ? 'flex' : 'none';
+  $('bmAmt').textContent = money(quote(hours));
+}
+function openBook(id) {
+  const s = SLOTS.find(x => x.id === id);
+  if (!s) return;
+  current = s;
+  $('bmSlot').textContent = s.slot_no;
+  $('bmWhere').textContent = s.society + ', ' + s.city + (s.ev ? ' · EV charging' : '');
+  $('bmError').classList.remove('show');
+  updateBookUI();
+  openModal('bookModal');
+  loadAvail();
+}
+
+/* ---------- live availability strip ---------- */
+const h2m = t => { const [h, m] = (t || '0:0').split(':').map(Number); return h * 60 + (m || 0); };
+let AV = { busy: [], avail_from: '00:00', avail_to: '23:59' };
+async function loadAvail() {
+  if (!current) return;
+  const d = $('bmDate').value;
+  $('bmAvailDate').textContent = fmtDay(d);
+  try {
+    AV = await api(`/slots/${current.id}/availability?date=${d}`);
+  } catch {
+    AV = { busy: [], avail_from: current.avail_from, avail_to: current.avail_to };
+  }
+  renderAvail();
+}
+function renderAvail() {
+  const strip = $('bmAvail');
+  if (!strip || !current) return;
+  const d = $('bmDate').value;
+  const base = new Date(d + 'T00:00:00').getTime();
+  const from = h2m(AV.avail_from);
+  const to = AV.avail_to === '23:59' ? 1440 : h2m(AV.avail_to);
+  strip.innerHTML = '';
+  for (let h = 0; h < 24; h++) {
+    const bs = base + h * 3600e3, be = bs + 3600e3;
+    const busy = (AV.busy || []).some(b => bs < b.e && be > b.s);
+    const conflict = !busy && (AV.busy || []).some(b => bs < b.e && bs + hours * 3600e3 > b.s);
+    const off = h * 60 < from || h * 60 >= to || be <= Date.now();
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    const sel = $('bmTime').value === String(h).padStart(2, '0') + ':00';
+    btn.className = 'hb' + (busy ? ' busy' : '') + (conflict ? ' conflict' : '') + (off ? ' off' : '') + (sel && !busy && !conflict && !off ? ' sel' : '');
+    btn.title = String(h).padStart(2, '0') + ':00' + (busy ? ' — booked' : '') + (conflict ? ' — conflicts with selected duration' : '');
+    if (busy || conflict || off) btn.disabled = true;
+    else btn.addEventListener('click', () => {
+      $('bmTime').value = String(h).padStart(2, '0') + ':00';
+      renderAvail();
+    });
+    strip.appendChild(btn);
+  }
+}
+$('bmDur').querySelectorAll('.dur').forEach(d => d.addEventListener('click', () => {
+  $('bmDur').querySelectorAll('.dur').forEach(x => x.classList.remove('active'));
+  d.classList.add('active');
+  hours = +d.dataset.h;
+  updateBookUI();
+  renderAvail();
+}));
+$('bmCancel').addEventListener('click', () => closeModal('bookModal'));
+document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); }));
+
+$('bmConfirm').addEventListener('click', async () => {
+  if (!current) return;
+  if (!store.token) {
+    toast('Please sign in to book a slot');
+    setTimeout(() => location.href = 'login.html?next=browse.html', 900);
+    return;
+  }
+  const btn = $('bmConfirm');
+  btn.disabled = true; btn.textContent = 'Booking…';
+  try {
+    const { booking } = await api('/bookings', {
+      method: 'POST',
+      body: {
+        slot_id: current.id,
+        date: $('bmDate').value,
+        start_time: $('bmTime').value,
+        hours,
+        vehicle_no: $('bmVeh').value.trim() || 'MH 12 AB 3456'
+      }
+    });
+    closeModal('bookModal');
+    $('okDetail').innerHTML = `
+      <div><span>Slot</span><b>${esc(current.slot_no)}${current.ev ? ' · EV' : ''}</b></div>
+      <div><span>Where</span><b>${esc(current.society)}, ${esc(current.city)}</b></div>
+      <div><span>When</span><b>${fmtDay(booking.date)}, ${time12(booking.start_time)}</b></div>
+      <div><span>Duration</span><b>${hoursLabel(booking.hours)}</b></div>
+      <div><span>Vehicle</span><b>${esc(booking.vehicle_no)}</b></div>
+      <div><span>Paid</span><b style="color:var(--green)">${money(booking.total)}</b></div>`;
+    $('okPass').href = 'pass.html?booking=' + booking.id;
+    openModal('okModal');
+    load();
+  } catch (e) {
+    $('bmError').textContent = e.message;
+    $('bmError').classList.add('show');
+    if (e.status === 401) { store.token = ''; store.user = ''; }
+  } finally {
+    btn.disabled = false; btn.textContent = 'Confirm booking';
+  }
+});
+$('okClose').addEventListener('click', () => closeModal('okModal'));
+
+/* ---------- list / map view toggle ---------- */
+let currentView = 'list';
+let map = null, markerGroup = null;
+
+function setView(v) {
+  currentView = v;
+  const isMap = v === 'map';
+  $('vList').classList.toggle('active', !isMap);
+  $('vMap').classList.toggle('active', isMap);
+  $('grid').classList.toggle('hidden', isMap);
+  $('mapView').style.display = isMap ? 'block' : 'none';
+  $('mapNote').classList.toggle('hidden', !isMap);
+  $('mapFallback').classList.add('hidden');
+  if (isMap) showMap();
+}
+$('vList').addEventListener('click', () => setView('list'));
+$('vMap').addEventListener('click', () => setView('map'));
+
+async function showMap() {
+  try {
+    await ensureLeaflet();
+  } catch (e) {
+    $('mapFallback').classList.remove('hidden');
+    return;
+  }
+  if (!map) {
+    map = L.map('map', { scrollWheelZoom: true });
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+    markerGroup = L.layerGroup().addTo(map);
+    map.setView([20.5937, 78.9629], 5);
+  }
+  setTimeout(() => map.invalidateSize(), 80);
+  renderMarkers();
+}
+
+function renderMarkers() {
+  if (!map || !markerGroup) return;
+  markerGroup.clearLayers();
+  const pts = [];
+  SLOTS.forEach(s => {
+    if (s.lat == null || s.lng == null) return;
+    const p = [s.lat, s.lng];
+    pts.push(p);
+    const icon = L.divIcon({
+      className: '',
+      html: `<div class="pn-marker${s.ev ? ' ev' : ''}" title="${s.ev ? 'EV charging · ' : ''}${esc(s.slot_no)}">P</div>`,
+      iconSize: [36, 36], iconAnchor: [18, 34], popupAnchor: [0, -32]
+    });
+    const m = L.marker(p, { icon });
+    m.bindPopup(`
+      <div class="pop-soc">${esc(s.society)} · ${esc(s.slot_no)}</div>
+      <div class="pop-city">${esc(s.city)}${s.ev ? ' · EV charging' : ''}${s.covered ? ' · Covered' : ''} · by ${esc(s.owner_name)}</div>
+      <div class="pop-price">${money(s.price_hour)}/hr &nbsp;·&nbsp; ${money(s.price_month)}/mo</div>
+      <button class="btn btn-primary btn-sm map-book" data-book="${s.id}" style="width:100%;margin-top:10px">Book this slot</button>`);
+    markerGroup.addLayer(m);
+  });
+  if (pts.length) {
+    map.fitBounds(L.latLngBounds(pts).pad(0.3));
+  } else {
+    map.setView([20.5937, 78.9629], 5);
+  }
+}
+
+/* popup "Book" buttons (delegated — popups re-render) */
+document.addEventListener('click', e => {
+  const b = e.target.closest('.map-book');
+  if (b) openBook(+b.dataset.book);
+});
+
+load().then(() => {
+  const pre = +params.get('slot');
+  if (pre) openBook(pre);
+});
+</script>
+</body>
+</html>

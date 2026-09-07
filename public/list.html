@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>List Your Parking Spot — ParkNest</title>
+<meta name="description" content="Rent out your unused apartment parking slot and earn up to ₹8,000/month. Free to list.">
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='1' y='1' width='22' height='22' rx='6' fill='%235b3df5'/%3E%3Ctext x='12' y='17' font-size='14' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+  <div class="grid-overlay"></div><div id="particles"></div>
+</div>
+
+<header id="navbar">
+  <nav class="nav">
+    <a class="logo" href="index.html"><span class="pin"><svg class="ic-svg"><use href="#i-parking"/></svg></span>Park<em>Nest</em></a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="browse.html">Browse slots</a>
+      <a href="list.html" class="active">List your spot</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="index.html#faq">FAQ</a>
+    </div>
+    <div class="nav-cta" id="navAuth"></div>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <div class="wrap">
+      <span class="sec-tag">For owners</span>
+      <h1 style="font-size:clamp(2.2rem,4.5vw,3.4rem)">List your spot. <span class="grad">Start earning.</span></h1>
+      <p class="sec-sub" style="margin-bottom:10px">That covered slot under your apartment earns nothing while you're at work. Let it pay you back — free to list, you keep 85% of every booking.</p>
+    </div>
+  </div>
+
+  <section style="padding-top:26px">
+    <div class="wrap" style="display:grid;grid-template-columns:1.05fr .95fr;gap:24px;align-items:stretch" id="listGrid">
+
+      <!-- earnings estimator -->
+      <div class="panel calc-card reveal">
+        <h3><svg class="ic-svg"><use href="#i-chart"/></svg> Earnings estimator</h3>
+        <div class="calc-amt" id="calcAmt">₹6,120<small> /month</small></div>
+        <div class="calc-note">Estimate after ParkNest's 15% fee, paid out within 24 hrs of every booking.</div>
+        <label for="hrsRange" style="font-size:.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:600">Hours your slot stays free per day</label>
+        <input type="range" id="hrsRange" min="2" max="12" value="6" step="1">
+        <div class="calc-vals"><span><b id="hrsVal">6 hrs</b> / day</span><span>@ <b id="rateVal">₹40</b> / hr (from your price below)</span></div>
+        <div class="calc-split">
+          <div class="mini-stat"><div class="k">Per booking avg</div><div class="v" id="calcPer">₹102</div></div>
+          <div class="mini-stat"><div class="k">Yearly potential</div><div class="v" id="calcYear">₹73,440</div></div>
+        </div>
+        <div style="font-size:.85rem;color:var(--muted)">Owners near IT parks &amp; metro stations average <b style="color:var(--green)">₹7,400/mo</b> with monthly rentals.</div>
+      </div>
+
+      <!-- listing form -->
+      <div class="panel reveal">
+        <h3><svg class="ic-svg"><use href="#i-file"/></svg> Listing details</h3>
+        <form id="listForm">
+          <div class="field">
+            <label for="society">Society name</label>
+            <input type="text" id="society" placeholder="e.g. Sunrise Society" required>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="city">City</label>
+              <select id="city"><option>Pune</option><option>Mumbai</option><option>Bengaluru</option><option>Other</option></select>
+            </div>
+            <div class="field">
+              <label for="slotNo">Slot number</label>
+              <input type="text" id="slotNo" placeholder="e.g. B1-24" required>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="ptype">Vehicle type</label>
+              <select id="ptype"><option>Car</option><option>Two-wheeler</option><option>Both</option></select>
+            </div>
+            <div class="field">
+              <label class="check-row" style="margin-top:30px"><input type="checkbox" id="evCheck"> <svg class="ic-svg" style="width:16px;height:16px;color:var(--green)"><use href="#i-zap"/></svg> EV charging point</label>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="fromT">Free from</label>
+              <select id="fromT"><option value="06:00">6:00 AM</option><option value="09:00" selected>9:00 AM</option><option value="12:00">12:00 PM</option><option value="18:00">6:00 PM</option></select>
+            </div>
+            <div class="field">
+              <label for="toT">Free till</label>
+              <select id="toT"><option value="12:00">12:00 PM</option><option value="18:00">6:00 PM</option><option value="21:00" selected>9:00 PM</option><option value="23:59">11:59 PM</option></select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="ph">Hourly rate (₹)</label>
+              <input type="number" id="ph" min="5" max="500" value="40" required>
+            </div>
+            <div class="field">
+              <label for="pm">Monthly rate (₹)</label>
+              <input type="number" id="pm" min="500" max="20000" value="2600" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="note">Short description</label>
+            <textarea id="note" placeholder="e.g. Covered basement slot near lift lobby, camera facing, 2 min from main gate."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">List my spot — it's free</button>
+          <p class="form-error" id="listError"></p>
+          <div class="form-success" id="listSuccess"><span id="listSuccessTxt"></span></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- signed-out prompt -->
+    <div class="wrap" id="signedOut" style="display:none;max-width:640px">
+      <div class="empty">
+        <svg class="ic-svg"><use href="#i-shield"/></svg>
+        <h3>Sign in to list your spot</h3>
+        <p>Creating a listing takes 2 minutes. <a href="login.html?next=list.html" style="color:var(--violet);font-weight:700">Sign in or create a free account</a>.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="foot-bottom" style="border:none;padding-top:0">
+    <span>© <span id="year"></span> ParkNest Technologies Pvt. Ltd.</span>
+    <span><a href="index.html" style="color:var(--violet)">Back to home</a></span>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+
+/* require auth for listing */
+if (!store.token) {
+  $('listGrid').style.display = 'none';
+  $('signedOut').style.display = 'block';
+} else {
+  refreshUser();
+}
+
+/* estimator (uses hourly rate input) */
+function updateCalc() {
+  const h = +$('hrsRange').value;
+  const rate = Math.max(5, +$('ph').value || 40);
+  const monthly = Math.round(h * 30 * rate * 0.85);
+  $('calcAmt').innerHTML = money(monthly) + '<small> /month</small>';
+  $('hrsVal').textContent = h + ' hrs';
+  $('rateVal').textContent = '₹' + rate;
+  $('calcPer').textContent = money(Math.round(h * rate * 0.85));
+  $('calcYear').textContent = money(monthly * 12);
+}
+$('hrsRange').addEventListener('input', updateCalc);
+$('ph').addEventListener('input', updateCalc);
+updateCalc();
+
+/* submit */
+$('listForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = $('listForm').querySelector('button[type=submit]');
+  btn.disabled = true;
+  $('listError').classList.remove('show');
+  try {
+    const { slot } = await api('/slots', {
+      method: 'POST',
+      body: {
+        society: $('society').value.trim(),
+        city: $('city').value,
+        slot_no: $('slotNo').value.trim(),
+        vehicle_type: $('ptype').value,
+        ev: $('evCheck').checked,
+        covered: true,
+        price_hour: +$('ph').value,
+        price_month: +$('pm').value,
+        avail_from: $('fromT').value,
+        avail_to: $('toT').value,
+        note: $('note').value.trim()
+      }
+    });
+    $('listSuccessTxt').innerHTML =
+      `<b>"${esc(slot.slot_no)}" at ${esc(slot.society)}</b> is live! Parkers can book it right now.
+       ${slot.ev ? 'EV tag added. ' : ''}<a href="dashboard.html" style="text-decoration:underline">Track it on your dashboard</a>.`;
+    $('listSuccess').classList.add('show');
+    toast('Spot listed successfully');
+    $('listForm').reset();
+    updateCalc();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err) {
+    $('listError').textContent = err.message;
+    $('listError').classList.add('show');
+    if (err.status === 401) setTimeout(() => location.href = 'login.html?next=list.html', 900);
+  } finally {
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>

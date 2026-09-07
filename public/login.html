@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in — ParkNest</title>
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='1' y='1' width='22' height='22' rx='6' fill='%235b3df5'/%3E%3Ctext x='12' y='17' font-size='14' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+  <div class="grid-overlay"></div><div id="particles"></div>
+</div>
+
+<header id="navbar">
+  <nav class="nav">
+    <a class="logo" href="index.html"><span class="pin"><svg class="ic-svg"><use href="#i-parking"/></svg></span>Park<em>Nest</em></a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="browse.html">Browse slots</a>
+      <a href="list.html">List your spot</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="index.html#faq">FAQ</a>
+    </div>
+    <div class="nav-cta" id="navAuth"></div>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+</header>
+
+<main>
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-head">
+        <span class="pin"><svg class="ic-svg"><use href="#i-parking"/></svg></span>
+        <h1>Welcome <span style="font-style:italic;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">back</span></h1>
+        <p>Sign in to book slots or manage your listings.</p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" id="tabIn">Sign in</button>
+        <button class="tab-btn" id="tabUp">Create account</button>
+      </div>
+
+      <!-- sign in -->
+      <form id="formIn">
+        <div class="field">
+          <label for="inEmail">Email</label>
+          <input type="email" id="inEmail" placeholder="you@example.com" required>
+        </div>
+        <div class="field">
+          <label for="inPass">Password</label>
+          <input type="password" id="inPass" placeholder="Your password" required>
+        </div>
+        <p class="form-error" id="inError"></p>
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top:8px">Sign in</button>
+      </form>
+
+      <!-- sign up -->
+      <form id="formUp" style="display:none">
+        <div class="field">
+          <label for="upName">Full name</label>
+          <input type="text" id="upName" placeholder="e.g. Priya Sharma" required>
+        </div>
+        <div class="field">
+          <label for="upEmail">Email</label>
+          <input type="email" id="upEmail" placeholder="you@example.com" required>
+        </div>
+        <div class="field">
+          <label for="upPhone">Phone (optional)</label>
+          <input type="tel" id="upPhone" placeholder="98765 43210">
+        </div>
+        <div class="field">
+          <label for="upPass">Password</label>
+          <input type="password" id="upPass" placeholder="Minimum 6 characters" required minlength="6">
+        </div>
+        <p class="form-error" id="upError"></p>
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top:8px">Create account</button>
+      </form>
+
+      <div class="demo-box">
+        <b>Demo account</b> — explore as an owner &amp; parker:<br>
+        <b>demo@parknest.in</b> / <b>demo1234</b>
+        <button type="button" id="fillDemo">Fill and sign in</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="foot-bottom" style="border:none;padding-top:0">
+    <span>© <span id="year"></span> ParkNest Technologies Pvt. Ltd.</span>
+    <span><a href="index.html" style="color:var(--violet)">Back to home</a></span>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+const next = params.get('next') || 'dashboard.html';
+if (params.get('mode') === 'signup') switchTab(true);
+
+/* already signed in? just go */
+if (store.token) {
+  refreshUser().then(u => { if (u) location.href = next; });
+}
+
+function switchTab(signup) {
+  $('tabIn').classList.toggle('active', !signup);
+  $('tabUp').classList.toggle('active', signup);
+  $('formIn').style.display = signup ? 'none' : 'block';
+  $('formUp').style.display = signup ? 'block' : 'none';
+}
+$('tabIn').addEventListener('click', () => switchTab(false));
+$('tabUp').addEventListener('click', () => switchTab(true));
+
+function go() { location.href = next; }
+
+$('formIn').addEventListener('submit', async e => {
+  e.preventDefault();
+  $('inError').classList.remove('show');
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true;
+  try {
+    const { token, user } = await api('/auth/login', {
+      method: 'POST',
+      body: { email: $('inEmail').value.trim(), password: $('inPass').value }
+    });
+    store.token = token; store.user = user;
+    toast('Welcome back, ' + user.name.split(' ')[0] + '!');
+    setTimeout(go, 500);
+  } catch (err) {
+    $('inError').textContent = err.message;
+    $('inError').classList.add('show');
+    btn.disabled = false;
+  }
+});
+
+$('formUp').addEventListener('submit', async e => {
+  e.preventDefault();
+  $('upError').classList.remove('show');
+  const btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true;
+  try {
+    const { token, user } = await api('/auth/register', {
+      method: 'POST',
+      body: {
+        name: $('upName').value.trim(),
+        email: $('upEmail').value.trim(),
+        phone: $('upPhone').value.trim(),
+        password: $('upPass').value
+      }
+    });
+    store.token = token; store.user = user;
+    toast('Account created. Welcome to ParkNest!');
+    setTimeout(go, 500);
+  } catch (err) {
+    $('upError').textContent = err.message;
+    $('upError').classList.add('show');
+    btn.disabled = false;
+  }
+});
+
+$('fillDemo').addEventListener('click', () => {
+  switchTab(false);
+  $('inEmail').value = 'demo@parknest.in';
+  $('inPass').value = 'demo1234';
+  $('formIn').dispatchEvent(new Event('submit', { cancelable: true }));
+});
+</script>
+</body>
+</html>

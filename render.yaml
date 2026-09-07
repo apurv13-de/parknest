@@ -1,0 +1,14 @@
+# Render.com one-click config for the ParkNest API
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: parknest-api
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/stats
+    envVars:
+      - key: NODE_VERSION
+        value: 20.19.0

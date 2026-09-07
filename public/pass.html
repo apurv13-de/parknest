@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gate Pass — ParkNest</title>
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='1' y='1' width='22' height='22' rx='6' fill='%235b3df5'/%3E%3Ctext x='12' y='17' font-size='14' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+  <div class="grid-overlay"></div><div id="particles"></div>
+</div>
+
+<header id="navbar" class="no-print">
+  <nav class="nav">
+    <a class="logo" href="index.html"><span class="pin"><svg class="ic-svg"><use href="#i-parking"/></svg></span>Park<em>Nest</em></a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="browse.html">Browse slots</a>
+      <a href="list.html">List your spot</a>
+      <a href="dashboard.html">Dashboard</a>
+    </div>
+    <div class="nav-cta" id="navAuth"></div>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+</header>
+
+<main>
+  <div class="pass-wrap" id="passWrap">
+    <div class="loading">Loading gate pass…</div>
+  </div>
+</main>
+
+<footer class="no-print">
+  <div class="foot-bottom" style="border:none;padding-top:0">
+    <span>© <span id="year"></span> ParkNest Technologies Pvt. Ltd.</span>
+    <span>Society security? <a href="verify.html" style="color:var(--violet)">Verify a pass</a></span>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+if (!requireAuth()) throw new Error('redirecting');
+
+const wrap = document.getElementById('passWrap');
+const params = new URLSearchParams(location.search);
+const id = +params.get('booking');
+
+const STATE_CHIP = {
+  active:   ['st-active', 'Valid now'],
+  upcoming: ['st-upcoming', 'Not started yet'],
+  expired:  ['st-past', 'Expired'],
+  cancelled:['st-cancelled', 'Cancelled']
+};
+
+(async () => {
+  if (!id) { wrap.innerHTML = '<div class="empty"><h3>No booking specified.</h3><p>Open a gate pass from your dashboard.</p></div>'; return; }
+  try {
+    const { booking: b } = await api('/bookings/' + id + '/pass');
+    const [cls, label] = STATE_CHIP[b.state] || ['st-past', b.state];
+    let qrSvg = '';
+    try { qrSvg = await apiRaw('/bookings/' + id + '/qr.svg'); } catch (e) { qrSvg = ''; }
+    const osm = b.lat != null && b.lng != null
+      ? `<a class="btn btn-ghost" target="_blank" rel="noopener" href="https://www.openstreetmap.org/?mlat=${b.lat}&mlon=${b.lng}#map=17/${b.lat}/${b.lng}">Open in maps</a>`
+      : '';
+    wrap.innerHTML = `
+      <div class="pass-card">
+        <div class="pass-band">
+          <span class="t">ParkNest Gate Pass</span>
+          <span class="s">${esc(b.society)}</span>
+        </div>
+        <div class="pass-body">
+          <span class="st ${cls}" style="font-size:.78rem">${label}</span>
+          <div class="pass-qrsvg" id="qrBox">${qrSvg}</div>
+          <div class="pass-code">${esc(b.pass_code || '—')}</div>
+          <div class="pass-hint">Security can scan this QR, or enter the code at <b>verify.html</b></div>
+          <div class="pass-rows">
+            <div><span>Slot</span><b>${esc(b.slot_no)}${b.ev ? ' · EV' : ''}</b></div>
+            <div><span>Society</span><b>${esc(b.society)}, ${esc(b.city)}</b></div>
+            <div><span>Date</span><b>${fmtDay(b.date)}</b></div>
+            <div><span>Window</span><b>${time12(b.start_time)} – ${time12(b.end_time)}</b></div>
+            <div><span>Duration</span><b>${hoursLabel(b.hours)}</b></div>
+            <div><span>Vehicle</span><b>${esc(b.vehicle_no)}</b></div>
+            <div><span>Parker</span><b>${esc(b.parker)}</b></div>
+          </div>
+        </div>
+        <div class="pass-actions no-print">
+          <button class="btn btn-primary" onclick="window.print()">Print pass</button>
+          ${osm}
+          <a class="btn btn-ghost" href="dashboard.html">Dashboard</a>
+        </div>
+      </div>`;
+  } catch (e) {
+    wrap.innerHTML = `<div class="empty">
+      <svg class="ic-svg"><use href="#i-shield"/></svg>
+      <h3>Gate pass unavailable</h3><p>${esc(e.message)}</p>
+      <a href="dashboard.html" class="btn btn-primary btn-sm" style="margin-top:10px">Back to dashboard</a>
+    </div>`;
+  }
+})();
+</script>
+</body>
+</html>

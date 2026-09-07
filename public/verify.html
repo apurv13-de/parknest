@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify Gate Pass — ParkNest</title>
+<meta name="description" content="Society security: verify a ParkNest parking gate pass by code or QR scan.">
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='1' y='1' width='22' height='22' rx='6' fill='%235b3df5'/%3E%3Ctext x='12' y='17' font-size='14' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+  <div class="grid-overlay"></div><div id="particles"></div>
+</div>
+
+<header id="navbar">
+  <nav class="nav">
+    <a class="logo" href="index.html"><span class="pin"><svg class="ic-svg"><use href="#i-parking"/></svg></span>Park<em>Nest</em></a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="browse.html">Browse slots</a>
+      <a href="list.html">List your spot</a>
+      <a href="dashboard.html">Dashboard</a>
+    </div>
+    <div class="nav-cta" id="navAuth"></div>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <div class="wrap">
+      <span class="sec-tag">Society security</span>
+      <h1 style="font-size:clamp(2.2rem,4.5vw,3.4rem)">Verify a <span class="grad">gate pass.</span></h1>
+      <p class="sec-sub" style="margin-bottom:10px">Scan the driver's QR (it opens this page), or type the pass code below. The check is live against the booking system.</p>
+    </div>
+  </div>
+
+  <section style="padding-top:10px">
+    <div class="wrap" style="max-width:560px">
+      <div class="panel">
+        <div class="field" style="margin-bottom:12px">
+          <label for="code">Pass code</label>
+          <input type="text" id="code" placeholder="e.g. PN-7K2M9QX4" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase;font-family:ui-monospace,Menlo,monospace;letter-spacing:2px">
+        </div>
+        <button class="btn btn-primary btn-block" id="checkBtn">Check pass</button>
+        <p class="form-error" id="vErr"></p>
+      </div>
+      <div id="result" style="margin-top:22px"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="foot-bottom" style="border:none;padding-top:0">
+    <span>© <span id="year"></span> ParkNest Technologies Pvt. Ltd.</span>
+    <span><a href="index.html" style="color:var(--violet)">Back to home</a></span>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const STATE_TEXT = {
+  active:    ['ok', 'VALID — entry allowed', 'This pass is active for the current booking window.'],
+  upcoming:  ['bad', 'NOT ACTIVE YET', 'This pass is valid, but the booking has not started. Entry allowed only during the window below.'],
+  expired:   ['bad', 'EXPIRED', 'This booking window has ended.'],
+  cancelled: ['bad', 'CANCELLED', 'This booking was cancelled and must not be honoured.']
+};
+
+async function check(codeRaw) {
+  const code = String(codeRaw || $('code').value || '').toUpperCase().trim();
+  $('vErr').classList.remove('show');
+  const box = $('result');
+  if (!code) {
+    $('vErr').textContent = 'Enter a pass code first.';
+    $('vErr').classList.add('show');
+    return;
+  }
+  $('checkBtn').disabled = true;
+  try {
+    const { pass } = await api('/pass/' + encodeURIComponent(code));
+    const [cls, title, sub] = STATE_TEXT[pass.state] || ['bad', 'UNKNOWN', ''];
+    box.innerHTML = `
+      <div class="verify-card ${cls}">
+        <span class="st ${pass.state === 'active' ? 'st-active' : 'st-cancelled'}" style="font-size:.75rem">${esc(pass.pass_code)}</span>
+        <div class="v-state">${title}</div>
+        <div class="v-sub">${sub}</div>
+        <div class="verify-rows">
+          <div><span>Vehicle</span><b>${esc(pass.vehicle_no)}</b></div>
+          <div><span>Slot</span><b>${esc(pass.slot_no)}</b></div>
+          <div><span>Society</span><b>${esc(pass.society)}, ${esc(pass.city)}</b></div>
+          <div><span>Date</span><b>${fmtDay(pass.date)}</b></div>
+          <div><span>Window</span><b>${time12(pass.start_time)} + ${hoursLabel(pass.hours)}</b></div>
+          <div><span>Parker</span><b>${esc(pass.parker)}</b></div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('result').innerHTML=''">Clear</button>
+      </div>`;
+  } catch (e) {
+    box.innerHTML = `
+      <div class="verify-card bad">
+        <span class="st st-cancelled" style="font-size:.75rem">${esc(code)}</span>
+        <div class="v-state">INVALID PASS</div>
+        <div class="v-sub">${esc(e.message)} — double-check the code and try again. If the driver just booked, ask them to open the pass from their dashboard.</div>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('result').innerHTML=''">Clear</button>
+      </div>`;
+  } finally {
+    $('checkBtn').disabled = false;
+  }
+}
+
+$('checkBtn').addEventListener('click', () => check());
+$('code').addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+
+/* auto-check when opened from a scanned QR: verify.html?code=PN-XXXX */
+const code = new URLSearchParams(location.search).get('code');
+if (code) { $('code').value = code.toUpperCase(); check(code); }
+</script>
+</body>
+</html>

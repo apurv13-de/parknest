@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ParkNest — Rent Your Parking Slot. Book a Spot. Earn Monthly.</title>
+<meta name="description" content="ParkNest lets apartment owners rent out unused parking slots and lets drivers book verified slots inside societies instantly.">
+<meta name="theme-color" content="#ffffff">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect x='1' y='1' width='22' height='22' rx='6' fill='%235b3df5'/%3E%3Ctext x='12' y='17' font-size='14' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'%3EP%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="grid-overlay"></div>
+  <div id="particles"></div>
+</div>
+
+<header id="navbar">
+  <nav class="nav">
+    <a class="logo" href="index.html"><span class="pin"><svg class="ic-svg"><use href="#i-parking"/></svg></span>Park<em>Nest</em></a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html" class="active">Home</a>
+      <a href="browse.html">Browse slots</a>
+      <a href="list.html">List your spot</a>
+      <a href="#how">How it works</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-cta" id="navAuth"></div>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+</header>
+
+<main>
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-grid">
+    <div>
+      <div class="badge"><span class="dot"></span> Now live in Pune · Mumbai · Bengaluru</div>
+      <h1>Your idle parking slot can <span class="grad">pay your rent.</span></h1>
+      <p class="lead">Own a covered parking spot in your society that sits empty all day? List it on ParkNest in 2 minutes. Drivers book verified slots inside societies — safely, instantly, monthly or hourly.</p>
+      <div class="hero-ctas">
+        <a href="browse.html" class="btn btn-primary"><svg class="ic-svg"><use href="#i-parking"/></svg> Book a slot</a>
+        <a href="list.html" class="btn btn-ghost"><svg class="ic-svg"><use href="#i-money"/></svg> List your spot</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="num" id="statSlots" data-count="12400" data-suffix="+">0</div><div class="lbl">Slots listed</div></div>
+        <div class="stat"><div class="num" id="statSoc" data-count="48" data-suffix="+">0</div><div class="lbl">Societies onboard</div></div>
+        <div class="stat"><div class="num" id="statPaid" data-count="38" data-prefix="₹" data-suffix="L+">0</div><div class="lbl">Paid to owners</div></div>
+        <div class="stat"><div class="num" data-count="49" data-divide="10" data-suffix="★">0</div><div class="lbl">User rating</div></div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="slot-board">
+        <div class="board-head">
+          <h3>Sunrise Society · Basement B1</h3>
+          <span class="live"><span class="dot"></span> LIVE</span>
+        </div>
+        <div class="mini-grid">
+          <div class="mini-slot">A1</div>
+          <div class="mini-slot taken">A2</div>
+          <div class="mini-slot">A3</div>
+          <div class="mini-slot ev">A4</div>
+          <div class="mini-slot taken">B1</div>
+          <div class="mini-slot">B2</div>
+          <div class="mini-slot ev">B3</div>
+          <div class="mini-slot">B4</div>
+        </div>
+      </div>
+      <div class="chip-float"><svg class="ic-svg"><use href="#i-zap"/></svg> EV charging available</div>
+      <div class="ticket">
+        <div class="t-row"><span>Slot</span><b>B2 · Covered</b></div>
+        <div class="t-row"><span>Timing</span><b>9 AM – 7 PM</b></div>
+        <div class="t-row"><span>Owner earns</span><b style="color:var(--green)">+ ₹2,499/mo</b></div>
+        <div class="t-amount">₹83<span style="font-size:.85rem;color:var(--muted);font-style:normal">/day avg</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROAD -->
+<div class="road-wrap" aria-hidden="true">
+  <div class="road">
+    <div class="dash-line"></div>
+    <div class="car">
+      <svg viewBox="0 0 120 62" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 44 q0-14 16-16 l10-13 q3-4 9-4 h28 q6 0 9 4 l10 13 q16 2 16 16 v7 h-9 a9 9 0 0 1-18 0 h-36 a9 9 0 0 1-18 0 h-9 z" fill="#5b3df5"/>
+        <path d="M40 15 h14 v13 h-24 z" fill="#dff3ff"/><path d="M58 15 h12 l9 13 h-21 z" fill="#dff3ff"/>
+        <circle cx="34" cy="51" r="8" fill="#1d2140" stroke="#3a3f66" stroke-width="2"/><circle cx="34" cy="51" r="3" fill="#8a90b5"/>
+        <circle cx="88" cy="51" r="8" fill="#1d2140" stroke="#3a3f66" stroke-width="2"/><circle cx="88" cy="51" r="3" fill="#8a90b5"/>
+        <rect x="104" y="38" width="8" height="5" rx="2" fill="#ffd45e"/>
+      </svg>
+    </div>
+    <div class="car car2">
+      <svg viewBox="0 0 120 62" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 44 q0-14 16-16 l10-13 q3-4 9-4 h28 q6 0 9 4 l10 13 q16 2 16 16 v7 h-9 a9 9 0 0 1-18 0 h-36 a9 9 0 0 1-18 0 h-9 z" fill="#0aa6d6"/>
+        <path d="M40 15 h14 v13 h-24 z" fill="#dff3ff"/><path d="M58 15 h12 l9 13 h-21 z" fill="#dff3ff"/>
+        <circle cx="34" cy="51" r="8" fill="#1d2140" stroke="#3a3f66" stroke-width="2"/><circle cx="34" cy="51" r="3" fill="#8a90b5"/>
+        <circle cx="88" cy="51" r="8" fill="#1d2140" stroke="#3a3f66" stroke-width="2"/><circle cx="88" cy="51" r="3" fill="#8a90b5"/>
+        <rect x="104" y="38" width="8" height="5" rx="2" fill="#ffd45e"/>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Hourly parking · Monthly rentals · EV charging · Visitor slots · Gated society security · <b>Zero commission for first month</b> · Overnight parking · Two-wheeler &amp; car ·</span>
+    <span>Hourly parking · Monthly rentals · EV charging · Visitor slots · Gated society security · <b>Zero commission for first month</b> · Overnight parking · Two-wheeler &amp; car ·</span>
+  </div>
+</div>
+
+<!-- FRESH SLOTS -->
+<section id="fresh" style="padding-top:0">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="sec-tag">Live on ParkNest</span>
+      <h2>Fresh slots <span class="grad">near you</span></h2>
+      <p class="sec-sub">Real listings from owners on the platform right now.</p>
+    </div>
+    <div class="slots-grid reveal" id="freshGrid">
+      <div class="loading">Loading live slots…</div>
+    </div>
+    <div class="center" style="margin-top:34px">
+      <a href="browse.html" class="btn btn-ghost">Browse all slots <svg class="ic-svg"><use href="#i-search"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" style="padding-top:30px">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="sec-tag">How it works</span>
+      <h2>Two sides. <span class="grad">One simple flow.</span></h2>
+      <p class="sec-sub">Whether you have a spare slot or need one, you're four steps away.</p>
+    </div>
+    <div class="center reveal">
+      <div class="tabs" role="tablist">
+        <button class="tab-btn active" data-tab="rent"><svg class="ic-svg"><use href="#i-car"/></svg> I need parking</button>
+        <button class="tab-btn" data-tab="earn"><svg class="ic-svg"><use href="#i-home"/></svg> I own a spot</button>
+      </div>
+    </div>
+    <div class="tab-panel active reveal" id="tab-rent">
+      <div class="steps">
+        <div class="step"><span class="ic"><svg class="ic-svg"><use href="#i-pin"/></svg></span><div class="n">01</div><h3>Search your society</h3><p>Type your apartment society or area. See live slot availability around it.</p></div>
+        <div class="step"><span class="ic"><svg class="ic-svg"><use href="#i-clock"/></svg></span><div class="n">02</div><h3>Pick slot &amp; timing</h3><p>Choose hourly, nightly or monthly. Filter for covered spots, EV charging or camera surveillance.</p></div>
+        <div class="step"><span class="ic"><svg class="ic-svg"><use href="#i-card"/></svg></span><div class="n">03</div><h3>Pay &amp; get gate pass</h3><p>Pay securely in-app. Get a digital gate pass + QR that the society security can verify instantly.</p></div>
+        <div class="step"><span class="ic"><svg class="ic-svg"><use href="#i-parking"/></svg></span><div class="n">04</div><h3>Park stress-free</h3><p>Navigate to your slot, scan the QR and park. Extend or cancel anytime with one tap.</p></div>
+      </div>
+    </div>
+    <div class="tab-panel reveal" id="tab-earn">
+      <div class="steps">
+        <div class="step"><span class="ic"><svg class="ic-svg"><use href="#i-file"/></svg></span><div class="n">01</div><h3>List in 2 minutes</h3><p>Add your society, slot number, available timings and photos. We pre-fill most details automatically.</p></div>
+        <div class="step"><span class="ic"><svg class="ic-svg"><use href="#i-tag"/></svg></span><div class="n">02</div><h3>Set your price</h3><p>Use our smart pricing to match demand in your area — or set your own hourly / monthly rate.</p></div>
+        <div class="step"><span class="ic"><svg class="ic-svg"><use href="#i-phone"/></svg></span><div class="n">03</div><h3>Get booking requests</h3><p>Accept or auto-accept verified drivers. Society-approved visitors only — safety is built in.</p></div>
+        <div class="step"><span class="ic"><svg class="ic-svg"><use href="#i-money"/></svg></span><div class="n">04</div><h3>Withdraw earnings</h3><p>Money lands in your account within 24 hours of each booking. Track everything on your dashboard.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="sec-tag">Why ParkNest</span>
+      <h2>Built for <span class="grad">society living</span></h2>
+      <p class="sec-sub">Not a cold parking lot app — designed around how Indian apartment societies actually work.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat reveal"><div class="f-ic"><svg class="ic-svg"><use href="#i-shield"/></svg></div><h3>Society-verified only</h3><p>Every driver is KYC-verified and gets a digital gate pass approved by your society office. Your security guard scans, verifies, done.</p></div>
+      <div class="feat reveal"><div class="f-ic"><svg class="ic-svg"><use href="#i-zap"/></svg></div><h3>EV-ready slots</h3><p>Filter for slots with charging points. EV owners get priority matching with charging-capable spots nearby.</p></div>
+      <div class="feat reveal"><div class="f-ic"><svg class="ic-svg"><use href="#i-money"/></svg></div><h3>24-hr payouts</h3><p>Owners keep 85% of every booking and get paid within 24 hours via UPI. No chasing, no awkward cash collection from strangers.</p></div>
+      <div class="feat reveal"><div class="f-ic"><svg class="ic-svg"><use href="#i-clock"/></svg></div><h3>Hourly to monthly</h3><p>From a 1-hour mall trip to a full monthly rental — flexible durations that match how your slot actually sits free.</p></div>
+      <div class="feat reveal"><div class="f-ic"><svg class="ic-svg"><use href="#i-video"/></svg></div><h3>Covered &amp; surveilled</h3><p>Basement and podium slots with CCTV, guards and boom barriers. Safer than any open street parking.</p></div>
+      <div class="feat reveal"><div class="f-ic"><svg class="ic-svg"><use href="#i-users"/></svg></div><h3>RWA friendly</h3><p>We work with resident welfare associations, share a cut with society amenity funds, and handle all compliance paperwork.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="stories">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="sec-tag">Real people</span>
+      <h2>Loved by owners <span class="grad">&amp; parkers</span></h2>
+    </div>
+    <div class="testi-grid" style="margin-top:48px">
+      <div class="testi reveal">
+        <div class="stars">★★★★★</div>
+        <p>"My covered slot stayed empty 10 hours a day. Now a guy who works in the nearby IT park rents it monthly. That's ₹2,800 off my maintenance every month."</p>
+        <div class="who"><div class="ava">RS</div><div><b>Rohit Sharma</b><span>Owner · Baner, Pune</span></div></div>
+      </div>
+      <div class="testi reveal">
+        <div class="stars">★★★★★</div>
+        <p>"Office parking near me costs ₹500/day. I found a society slot 5 minutes away for ₹90/day with CCTV. The QR gate pass thing is genuinely smooth."</p>
+        <div class="who"><div class="ava">AP</div><div><b>Ananya Patil</b><span>Parker · Kothrud, Pune</span></div></div>
+      </div>
+      <div class="testi reveal">
+        <div class="stars">★★★★★</div>
+        <p>"As a society secretary, I was worried about strangers. ParkNest only sends KYC-verified drivers with society-issued passes. Zero complaints in 6 months."</p>
+        <div class="who"><div class="ava">MK</div><div><b>Mohammed Khan</b><span>Society secretary · Mumbai</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="sec-tag">FAQ</span>
+      <h2>Questions? <span class="grad">Answered.</span></h2>
+    </div>
+    <div class="faq-list reveal" style="margin-top:48px">
+      <details open>
+        <summary>Is it allowed to rent out my society parking slot?<span class="plus">+</span></summary>
+        <div class="ans">In most societies, yes — as long as the slot is allotted to you and your RWA is informed. ParkNest handles RWA approvals and provides the society office with verified visitor details and gate passes. We recommend checking your society's parking policy once.</div>
+      </details>
+      <details>
+        <summary>How much can I actually earn?<span class="plus">+</span></summary>
+        <div class="ans">Owners typically earn ₹2,000–₹8,000/month depending on city, location and hours available. Slots near IT parks, metro stations and commercial areas earn the most. Owners keep 85% of every booking.</div>
+      </details>
+      <details>
+        <summary>What if the renter damages my car or blocks my slot?<span class="plus">+</span></summary>
+        <div class="ans">Every booking includes damage protection up to ₹50,000, and all drivers are KYC-verified with vehicle documents uploaded. If someone overstays, you can mark the slot blocked and our support team resolves it — you're never negotiating with a stranger.</div>
+      </details>
+      <details>
+        <summary>How does the society security know who to let in?<span class="plus">+</span></summary>
+        <div class="ans">Each booking generates a time-bound QR gate pass shared with both the driver and the society office. The guard scans it at the boom barrier — valid only for the booked window and vehicle number.</div>
+      </details>
+      <details>
+        <summary>When do I get paid as an owner?<span class="plus">+</span></summary>
+        <div class="ans">Within 24 hours of every completed booking, directly to your UPI or bank account. You can track all payouts in your dashboard and withdraw anytime.</div>
+      </details>
+      <details>
+        <summary>Do you support two-wheelers and EV charging?<span class="plus">+</span></summary>
+        <div class="ans">Yes — two-wheeler, car, or both. Slots with EV charging points carry an EV badge and can charge a premium. Filters let parkers find exactly what they need.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-band reveal">
+  <h2>Ready to make your <span class="grad">parking pay?</span></h2>
+  <p>Join thousands of owners earning from their slots and drivers parking smarter every day.</p>
+  <div class="hero-ctas">
+    <a href="list.html" class="btn btn-primary"><svg class="ic-svg"><use href="#i-money"/></svg> List your spot free</a>
+    <a href="browse.html" class="btn btn-ghost"><svg class="ic-svg"><use href="#i-parking"/></svg> Book a slot now</a>
+  </div>
+</div>
+</main>
+
+<footer>
+  <div class="foot-grid">
+    <div>
+      <a class="logo" href="index.html" style="margin-bottom:4px"><span class="pin"><svg class="ic-svg"><use href="#i-parking"/></svg></span>Park<em>Nest</em></a>
+      <p>The neighbourhood parking exchange. Rent your idle slot, book verified spots inside societies — hourly or monthly.</p>
+    </div>
+    <div>
+      <h4>For parkers</h4>
+      <ul>
+        <li><a href="browse.html">Browse slots</a></li>
+        <li><a href="dashboard.html">My bookings</a></li>
+        <li><a href="index.html#how">How it works</a></li>
+        <li><a href="index.html#faq">FAQ</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>For owners</h4>
+      <ul>
+        <li><a href="list.html">List your spot</a></li>
+        <li><a href="dashboard.html">Owner dashboard</a></li>
+        <li><a href="index.html#faq">Safety &amp; payouts</a></li>
+        <li><a href="index.html#stories">Owner stories</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Account</h4>
+      <ul>
+        <li><a href="login.html">Sign in</a></li>
+        <li><a href="login.html?mode=signup">Create account</a></li>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="verify.html">Verify gate pass</a></li>
+        <li><a href="index.html#faq">Support</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© <span id="year"></span> ParkNest Technologies Pvt. Ltd. · Made in Pune</span>
+    <span>Demo project — bookings are simulated.</span>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>
+/* tabs */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* live stats from API (fallbacks if API unreachable) */
+(async function loadStats() {
+  try {
+    const s = await api('/stats');
+    const set = (id, count, prefix, suffix) => {
+      const el = document.getElementById(id);
+      if (el) { el.dataset.count = count; el.dataset.prefix = prefix || ''; el.dataset.suffix = suffix || ''; }
+    };
+    set('statSlots', s.slots, '', '+');
+    set('statSoc', s.societies, '', '+');
+    set('statPaid', Math.max(1, Math.round(s.paid_out / 100000)), '₹', 'L+');
+  } catch (e) { /* keep defaults — page works offline */ }
+})();
+
+/* fresh slots preview */
+(async function loadFresh() {
+  const grid = document.getElementById('freshGrid');
+  try {
+    const { slots } = await api('/slots?sort=price_asc');
+    const picks = slots.slice(0, 3);
+    if (!picks.length) throw new Error('empty');
+    grid.innerHTML = picks.map(s => `
+      <div class="slot-card">
+        <div class="sc-top">
+          <div>
+            <div class="sc-society">${esc(s.society)}</div>
+            <div class="sc-city"><svg class="ic-svg"><use href="#i-pin"/></svg>${esc(s.city)} · ${esc(s.slot_no)}</div>
+          </div>
+          <div class="sc-badges">
+            ${s.ev ? '<span class="badge-pill badge-ev">EV</span>' : ''}
+            ${s.covered ? '<span class="badge-pill badge-cov">Covered</span>' : ''}
+            <span class="badge-pill badge-veh">${esc(s.vehicle_type)}</span>
+          </div>
+        </div>
+        <div class="sc-note">${esc(s.note || 'Verified society slot with gate pass access.')}</div>
+        <div class="sc-price">
+          <span class="p">${money(s.price_hour)}</span><span class="u">/hr</span>
+          <span class="pm">or <b>${money(s.price_month)}</b>/mo</span>
+        </div>
+        <div class="sc-foot">
+          <span class="sc-owner">Listed by <b>${esc(s.owner_name)}</b></span>
+          <a href="browse.html?slot=${s.id}" class="btn btn-primary btn-sm">Book</a>
+        </div>
+      </div>`).join('');
+  } catch (e) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
+      <svg class="ic-svg"><use href="#i-inbox"/></svg>
+      <h3>Live slots unavailable right now</h3>
+      <p>The API server isn't reachable from this page. Start it with <b>npm start</b> in /server, or check the API URL in <b>js/config.js</b>.</p>
+    </div>`;
+  }
+})();
+</script>
+</body>
+</html>
